@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumi's 英语宾语从句单页智能测验系统</title>
+    <!-- 引入 Tailwind CSS 确保极其精美的现代 UI 设计 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* 自定义美化滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* 环形进度条样式 */
+        .circle-bg {
+            fill: none;
+            stroke: #e2e8f0;
+            stroke-width: 3.8;
+        }
+        .circle {
+            fill: none;
+            stroke-width: 3.8;
+            stroke-linecap: round;
+            transition: stroke-dasharray 1s ease;
+        }
+
+        /* ==================== Lumi's 卢米 专属视觉样式 ==================== */
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #1e293b;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 800;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .brand-text { font-weight: 700; font-size: 1.2rem; }
+        .brand-text .en { color: #1e293b; }
+        .brand-text .cn { color: #64748b; font-size: 0.85rem; font-weight: 500; margin-left: 6px; }
+        .brand-tagline { font-size: 0.8rem; color: #64748b; font-style: italic; }
+
+        /* 右下角悬浮窗样式 */
+        .contact-float {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .contact-btn {
+            background: #07c160;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(7, 193, 96, 0.3);
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: none;
+            font-size: 0.95rem;
+        }
+
+        .contact-btn:hover {
+            transform: scale(1.05) translateY(-2px);
+            background: #06ad56;
+        }
+
+        .contact-card {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e2e8f0;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+            width: 220px;
+            text-align: center;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .contact-card.active {
+            display: block;
+        }
+
+        .contact-card h4 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            color: #1e293b;
+        }
+
+        .wechat-id {
+            background: #f3f4f6;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: #07c160;
+            font-weight: 700;
+            margin-bottom: 12px;
+            border: 1px dashed #07c160;
+            display: inline-block;
+        }
+
+        .copy-hint {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-800 relative">
+
+    <!-- 顶部导航栏 (对齐 Lumi's 卢米 品牌栏) -->
+    <header class="bg-white border-b border-slate-100 shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-3.5 flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center space-x-4">
+                <div class="brand-logo">
+                    <div class="brand-icon">L</div>
+                    <div class="brand-text">
+                        <span class="en">Lumi's</span>
+                        <span class="cn">卢米</span>
+                    </div>
+                </div>
+                <div class="h-6 w-[1px] bg-slate-200 hidden sm:block"></div>
+                <span class="brand-tagline hidden sm:inline">🧠 让每个知识盲点都被看见</span>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <span class="text-xs text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100 hidden md:inline-block">宾语从句专项 · 语序与时态</span>
+                <div id="status-badge" class="hidden px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-full text-xs font-semibold animate-pulse">
+                    正在测试中
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主体区域 -->
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
+
+        <!-- ==================== 1. 欢迎与个性化生成设置页面 ==================== -->
+        <div id="welcome-screen" class="space-y-6">
+            <!-- 已经调成白色底色的精美横幅 -->
+            <div class="bg-white border border-slate-100 rounded-3xl p-6 md:p-10 text-slate-800 shadow-md relative overflow-hidden">
+                <div class="relative z-10 space-y-4">
+                    <span class="px-3 py-1 bg-indigo-50 border border-indigo-100 rounded-full text-xs font-semibold tracking-wide text-indigo-600">AI 智能自适应组卷</span>
+                    <h2 class="text-2xl md:text-4xl font-extrabold leading-tight text-slate-900">全卷单页直达，难度分层突破</h2>
+                    <p class="text-slate-500 max-w-xl text-sm md:text-base leading-relaxed">
+                        系统支持实时、无重复的词汇时态组装，并创新加入“挑战级”长难句。利用定语从句和多重修饰语，剥离干扰，真正攻克高考和各大语法考点的深度防线！
+                    </p>
+                </div>
+                <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-indigo-500/5 rounded-full blur-2xl"></div>
+                <div class="absolute right-1/4 -top-10 w-32 h-32 bg-purple-400/5 rounded-full blur-xl"></div>
+            </div>
+
+            <!-- 参数设置卡片 -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-6">
+                <div>
+                    <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2">
+                        <span class="w-1.5 h-5 bg-indigo-600 rounded-full"></span>
+                        个性化生成配置
+                    </h3>
+                    <p class="text-slate-400 text-xs mt-1">自主配置生成属于你今天的专属特训题库</p>
+                </div>
+
+                <!-- 题量选择 -->
+                <div class="space-y-3">
+                    <label class="block text-sm font-semibold text-slate-700">1. 请选择本次测试题量：</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="setQuestionCount(10)" id="btn-count-10" class="btn-count py-3 px-4 rounded-xl border-2 text-center font-bold transition-all duration-200 border-indigo-600 bg-indigo-50/50 text-indigo-600 shadow-sm shadow-indigo-50">
+                            10 道题
+                        </button>
+                        <button onclick="setQuestionCount(15)" id="btn-count-15" class="btn-count py-3 px-4 rounded-xl border-2 text-center font-bold transition-all duration-200 border-slate-200 hover:border-indigo-300 text-slate-600">
+                            15 道题
+                        </button>
+                        <button onclick="setQuestionCount(20)" id="btn-count-20" class="btn-count py-3 px-4 rounded-xl border-2 text-center font-bold transition-all duration-200 border-slate-200 hover:border-indigo-300 text-slate-600">
+                            20 道题
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 难度配比选择 -->
+                <div class="space-y-3">
+                    <label class="block text-sm font-semibold text-slate-700">2. 请选择难度配比（按从句长度与复杂度划分）：</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="setDifficultyRatio('easy')" id="btn-ratio-easy" class="btn-ratio py-3 px-4 rounded-xl border-2 text-center text-xs md:text-sm font-bold transition-all duration-200 border-slate-200 text-slate-600 hover:border-indigo-300">
+                            新手推荐 <span class="block text-[10px] text-slate-400 font-normal">80% 普通 | 20% 挑战</span>
+                        </button>
+                        <button onclick="setDifficultyRatio('medium')" id="btn-ratio-medium" class="btn-ratio py-3 px-4 rounded-xl border-2 text-center text-xs md:text-sm font-bold transition-all duration-200 border-indigo-600 bg-indigo-50/50 text-indigo-600 shadow-sm shadow-indigo-50">
+                            标准均衡 <span class="block text-[10px] text-indigo-400 font-normal">50% 普通 | 50% 挑战</span>
+                        </button>
+                        <button onclick="setDifficultyRatio('hard')" id="btn-ratio-hard" class="btn-ratio py-3 px-4 rounded-xl border-2 text-center text-xs md:text-sm font-bold transition-all duration-200 border-slate-200 text-slate-600 hover:border-indigo-300">
+                            魔鬼攻坚 <span class="block text-[10px] text-slate-400 font-normal">20% 普通 | 80% 挑战</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button onclick="startQuiz()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-indigo-200 hover:shadow-indigo-300 transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                    <span>生成单页全新题库并开始挑战</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- 极简考点锦囊 -->
+            <div class="bg-slate-100 rounded-2xl p-6 border border-slate-200/60">
+                <h4 class="font-bold text-slate-900 mb-3 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                    题库分层解析指南
+                </h4>
+                <div class="grid md:grid-cols-2 gap-4 text-sm text-slate-600">
+                    <div class="bg-white p-4 rounded-xl border border-slate-200/50 space-y-2">
+                        <span class="font-bold text-emerald-600 flex items-center gap-1">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                            🟢 普通难度级特点
+                        </span>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            主句与从句结构均为单一直白陈述，词数在 5-10 词之间，无长修饰成分。考查“主干语序不倒装”及“主句过去，从句过去时态配合”。
+                        </p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200/50 space-y-2">
+                        <span class="font-bold text-amber-600 flex items-center gap-1">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                            🟡 挑战难度级特点
+                        </span>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            主从句中穿穿插有**定语从句（如 who won the prize）、时间状语或被动语态**。词数可达 15-25 词。旨在测试你是否能识破“定语从句”等长修饰干扰，准确寻找从句真正的“主语和谓语动词”。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 2. 全新单页答题页面 ==================== -->
+        <div id="quiz-screen" class="hidden space-y-6">
+            
+            <!-- 答题看板 (实时追踪) -->
+            <div id="quiz-dashboard" class="bg-white border border-indigo-100 rounded-2xl p-4 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 sticky top-[73px] z-40">
+                <div class="flex items-center space-x-4">
+                    <div>
+                        <span class="text-xs font-bold text-indigo-500 block uppercase tracking-wide">练习进度</span>
+                        <div class="flex items-baseline space-x-1">
+                            <span id="answered-count" class="text-2xl font-black text-indigo-700">0</span>
+                            <span class="text-slate-400 text-sm">/</span>
+                            <span id="total-count-lbl" class="text-slate-600 font-bold text-sm">10</span>
+                            <span class="text-slate-400 text-xs ml-2">(已答)</span>
+                        </div>
+                    </div>
+                    <div class="h-8 w-[1px] bg-slate-100 hidden md:block"></div>
+                    <div class="hidden md:block">
+                        <span class="text-xs font-bold text-amber-500 block uppercase tracking-wide">试卷难度构成</span>
+                        <span id="difficulty-mix-lbl" class="text-xs text-slate-500 font-medium">普通题: 5 | 挑战题: 5</span>
+                    </div>
+                </div>
+                
+                <!-- 进度条 -->
+                <div class="w-full md:w-1/3 bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                    <div id="quiz-overall-progress" class="bg-indigo-600 h-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <button onclick="submitAllAnswers()" id="submit-quiz-btn" class="w-full md:w-auto bg-slate-200 text-slate-400 cursor-not-allowed font-bold py-2.5 px-6 rounded-xl text-sm transition-all duration-200 flex items-center justify-center gap-2">
+                    <span>提交试卷并看报告</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- 提交后的精美报告卡片 -->
+            <div id="results-banner" class="hidden bg-white rounded-3xl p-6 border-2 border-indigo-100 shadow-xl flex flex-col md:flex-row items-center gap-6 transition-all duration-500">
+                <!-- 环形成绩图 -->
+                <div class="relative w-32 h-32 shrink-0">
+                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                        <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        <path id="result-ring" class="circle" stroke="#4f46e5" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span id="result-percent" class="text-2xl font-black text-slate-900">0%</span>
+                        <span class="text-[8px] text-slate-400 font-bold uppercase">正确率</span>
+                    </div>
+                </div>
+
+                <!-- 战绩文字 -->
+                <div class="space-y-3 text-center md:text-left flex-grow">
+                    <div class="flex items-center justify-center md:justify-start gap-2 flex-wrap">
+                        <span class="px-2.5 py-0.5 bg-indigo-50 text-indigo-700 rounded-full text-xs font-bold">测评分析报告</span>
+                        <span id="score-details-lbl" class="px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-full text-xs">答对 0/10 题</span>
+                    </div>
+                    <h2 id="result-headline" class="text-xl md:text-2xl font-extrabold text-slate-900 leading-tight">测试完成！进行中...</h2>
+                    <p id="result-summary" class="text-slate-500 text-xs md:text-sm leading-relaxed max-w-xl"></p>
+                    
+                    <div class="flex flex-wrap justify-center md:justify-start gap-3 pt-1">
+                        <button onclick="startQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-md shadow-indigo-100 text-xs flex items-center gap-1.5 transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.5"></path>
+                            </svg>
+                            刷一套新题
+                        </button>
+                        <button onclick="goHome()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 px-5 rounded-xl text-xs transition-all">
+                            返回设置主页
+                        </button>
+                        <button onclick="toggleAllExplanations()" id="toggle-explanations-btn" class="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold py-2.5 px-5 rounded-xl text-xs transition-all">
+                            展开全卷深入解析
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 题目容器 (由JS动态生成注入列表) -->
+            <div id="questions-list-container" class="space-y-6">
+                <!-- 所有问题卡片会展示在这里 -->
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Lumi's 右下角专属答疑悬浮窗 (对齐上传的 attributive_clause.html 模板设计) -->
+    <div class="contact-float">
+        <div class="contact-card" id="contactCard">
+            <h4>💬 答疑解惑</h4>
+            <div class="wechat-id">lumi_lumi</div>
+            <p class="copy-hint">长按复制微信号，添加老师</p>
+        </div>
+        <button class="contact-btn" onclick="toggleContact()">
+            <span>✨ 联系卢米老师</span>
+        </button>
+    </div>
+
+    <!-- 底部版权 (对齐上传的 attributive_clause.html 模板设计) -->
+    <footer class="bg-white border-t border-slate-100 py-8 mt-12">
+        <div class="max-w-4xl mx-auto px-4 text-center space-y-1.5">
+            <div class="text-slate-600 font-bold text-sm flex items-center justify-center gap-1.5">
+                <span>由</span>
+                <span class="text-indigo-600 font-black tracking-wider">Lumi's</span> 
+                <span class="text-slate-700 font-bold">卢米</span> 
+                <span>倾心打造 · 助你搞定宾语从句 ✨</span>
+            </div>
+            <p class="text-xs text-slate-400">每一次测试，从句的复杂短语、时态、人称都会实行动态解构重组 · 微信答疑: lumi_lumi</p>
+        </div>
+    </footer>
+
+    <!-- ==================== 核心 JavaScript 引擎 ==================== -->
+    <script>
+        // 联系方式展示切换逻辑 (对齐 attributive_clause.html 逻辑)
+        function toggleContact() {
+            const card = document.getElementById('contactCard');
+            card.classList.toggle('active');
+        }
+
+        // 全局状态管理
+        const state = {
+            totalQuestions: 10,
+            ratioType: 'medium', // easy, medium, hard
+            questions: [], // 包含生成的题目信息
+            userAnswers: {}, // 记录每题用户选择的索引 { qIndex: optionIndex }
+            isSubmitted: false // 试卷是否已提交锁定
+        };
+
+        // 基础词汇构件
+        const vocabulary = {
+            mainsPresent: [
+                "Do you know", 
+                "Could you tell me", 
+                "I wonder", 
+                "Please tell me", 
+                "I don't know", 
+                "Do you remember", 
+                "I want to ask", 
+                "Can you show me"
+            ],
+            mainsPast: [
+                "He asked me", 
+                "They wanted to know", 
+                "She wondered", 
+                "No one knew", 
+                "Our teacher asked us", 
+                "I didn't hear", 
+                "He wanted to ask", 
+                "We weren't sure"
+            ],
+            pronouns: [
+                { subj: "he", obj: "him", poss: "his", verbSing: "lives", verbPast: "lived", auxPresent: "does he live", auxPast: "did he live", bePresent: "is", bePast: "was", wantSing: "wants", wantPast: "wanted" },
+                { subj: "she", obj: "her", poss: "her", verbSing: "works", verbPast: "worked", auxPresent: "does she work", auxPast: "did she work", bePresent: "is", bePast: "was", wantSing: "wants", wantPast: "wanted" },
+                { subj: "they", obj: "them", poss: "their", verbSing: "live", verbPast: "lived", auxPresent: "do they live", auxPast: "did they live", bePresent: "are", bePast: "were", wantSing: "want", wantPast: "wanted" }
+            ],
+            places: ["the post office", "the nearest bank", "the train station", "the bus stop", "the library", "the hospital"],
+            things: ["the package", "the letter", "the meeting", "the movie", "the concert", "the game"]
+        };
+
+        // 工具函数：从数组里任意抽一个
+        function getRandomElement(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // 洗牌算法
+        function shuffle(arr) {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
+
+        // ==================== 普通题生成工厂 (特点：结构直接，词数短) ====================
+        const normalFactories = [
+            // 1. where 引导的现在时态
+            () => {
+                const main = getRandomElement(vocabulary.mainsPresent);
+                const p = getRandomElement(vocabulary.pronouns);
+                const correct = `where ${p.subj} ${p.verbSing}`;
+                const bad1 = `where ${p.auxPresent}`;
+                const bad2 = `where ${p.verbSing} ${p.subj}`;
+                const bad3 = `where ${p.subj} ${p.subj === 'they' ? 'lives' : 'live'}`; // 主谓不一致
+
+                return {
+                    difficulty: "普通",
+                    sentence: `${main} ______?`,
+                    options: [correct, bad1, bad2, bad3],
+                    correct,
+                    explanation: `
+                        <div class="space-y-1.5 text-xs text-slate-600 leading-relaxed">
+                            <span class="font-bold text-indigo-700 block text-sm">💡 普通题解析要点（一般现在时宾语从句）</span>
+                            <p><strong>1. 陈述语序：</strong> 宾语从句使用陈述句语序（主语+谓语）。排除倒装选项 <code class="text-rose-600 font-semibold">${bad1}</code> 和 <code class="text-rose-600 font-semibold">${bad2}</code>。</p>
+                            <p><strong>2. 主谓一致：</strong> 主句为现在时，从句也要根据主语代词形式对应单复数变化。主语为 <code class="text-slate-900 font-bold">${p.subj}</code> 对应 <code class="text-emerald-600 font-bold">${p.verbSing}</code>。因此排除主谓不一致的 <code class="text-rose-600 font-semibold">${bad3}</code>。</p>
+                        </div>
+                    `
+                };
+            },
+            // 2. where 引导的过去时态
+            () => {
+                const main = getRandomElement(vocabulary.mainsPast);
+                const p = getRandomElement(vocabulary.pronouns);
+                const correct = `where ${p.subj} ${p.verbPast}`;
+                const bad1 = `where ${p.auxPast}`;
+                const bad2 = `where ${p.subj} ${p.verbSing}`;
+                const bad3 = `where ${p.auxPresent}`;
+
+                return {
+                    difficulty: "普通",
+                    sentence: `${main} ______ .`,
+                    options: [correct, bad1, bad2, bad3],
+                    correct,
+                    explanation: `
+                        <div class="space-y-1.5 text-xs text-slate-600 leading-relaxed">
+                            <span class="font-bold text-indigo-700 block text-sm">💡 普通题解析要点（时态呼应原则）</span>
+                            <p><strong>1. 时态匹配：</strong> 主句是过去时态（<code class="text-indigo-600 font-semibold">${main}</code>），宾语从句也必须呼应使用对应的<strong>过去时态</strong>。选项 <code class="text-rose-600 font-semibold">${bad2}</code> 和 <code class="text-rose-600 font-semibold">${bad3}</code> 用了现在时，不匹配。</p>
+                            <p><strong>2. 陈述语序：</strong> 排除倒装疑问句式的助动词置前项 <code class="text-rose-600 font-semibold">${bad1}</code>。</p>
+                        </div>
+                    `
+                };
+            },
+            // 3. what 引导的现在进行时
+            () => {
+                const main = getRandomElement(vocabulary.mainsPresent);
+                const p = getRandomElement(vocabulary.pronouns);
+                const correct = `what ${p.subj} ${p.bePresent} doing`;
+                const bad1 = `what ${p.bePresent} ${p.subj} doing`;
+                const bad2 = `what ${p.subj} doing`;
+                const bad3 = `what does ${p.subj} doing`;
+
+                return {
+                    difficulty: "普通",
+                    sentence: `${main} ______?`,
+                    options: [correct, bad1, bad2, bad3],
+                    correct,
+                    explanation: `
+                        <div class="space-y-1.5 text-xs text-slate-600 leading-relaxed">
+                            <span class="font-bold text-indigo-700 block text-sm">💡 普通题解析要点（现在进行时结构）</span>
+                            <p><strong>1. 陈述语序：</strong> 主语在系动词 be 前，应为 <code class="text-emerald-600 font-bold">${p.subj} ${p.bePresent}</code>，排除倒装的 <code class="text-rose-600 font-semibold">${bad1}</code>。</p>
+                            <p><strong>2. 结构完整：</strong> 进行时必须有 be 动词。排除缺失 be 的 <code class="text-rose-600 font-semibold">${bad2}</code>；而助动词 does 不能与 doing 直接连用，排除 <code class="text-rose-600 font-semibold">${bad3}</code>。</p>
+                        </div>
+                    `
+                };
+            },
+            // 4. why 引导的现在时
+            () => {
+                const main = getRandomElement(vocabulary.mainsPresent);
+                const p = getRandomElement(vocabulary.pronouns);
+                const correct = `why ${p.subj} ${p.bePresent} late`;
+                const bad1 = `why ${p.bePresent} ${p.subj} late`;
+                const bad2 = `why ${p.subj} late`;
+                const bad3 = `why does ${p.subj} late`;
+
+                return {
+                    difficulty: "普通",
+                    sentence: `${main} ______?`,
+                    options: [correct, bad1, bad2, bad3],
+                    correct,
+                    explanation: `
+                        <div class="space-y-1.5 text-xs text-slate-600 leading-relaxed">
+                            <span class="font-bold text-indigo-700 block text-sm">💡 普通题解析要点（形容词伴随句型）</span>
+                            <p><strong>1. 陈述语序：</strong> 排除疑问句式倒装的 <code class="text-rose-600 font-semibold">${bad1}</code>。</p>
+                            <p><strong>2. 系表结构：</strong> late 是形容词，必须搭配 be 动词组成系表结构，不可直接接主语（排除 <code class="text-rose-600 font-semibold">${bad2}</code>），也不可用助动词 does 修饰（排除 <code class="text-rose-600 font-semibold">${bad3}</code>）。</p>
+                        </div>
+                    `
+                };
+            },
+            // 5. when 引导的将来时
+            () => {
+                const main = getRandomElement(vocabulary.mainsPresent);
+                const item = getRandomElement(vocabulary.things);
+                const correct = `when ${item} will start`;
+                const bad1 = `when will ${item} start`;
+                const bad2 = `when is ${item} start`;
+                const bad3 = `when would ${item} start`;
+
+                return {
+                    difficulty: "普通",
+                    sentence: `${main} ______?`,
+                    options: [correct, bad1, bad2, bad3],
+                    correct,
+                    explanation: `
+                        <div class="space-y-1.5 text-xs text-slate-600 leading-relaxed">
+                            <span class="font-bold text-indigo-700 block text-sm">💡 普通题解析要点（将来时语序）</span>
+                            <p><strong>1. 陈述语序：</strong> 情态动词/助动词 will 必须在主语名词 <code class="text-slate-900 font-semibold">${item}</code> 之后。排除倒装的 <code class="text-rose-600 font-semibold">${bad1}</code>。</p>
+                            <p><strong>2. 时态配合：</strong> 主句为现在时，描述未来动向，用 will 即可，不需变成过去将来时 would（排除 <code class="text-rose-600 font-semibold">${bad3}</code>）。</p>
+                        </div>
+                    `
+                };
+            },
+            // 6. how 引导的情态动词句式
+            () => {
+                const main = getRandomElement(vocabulary.mainsPresent);
+                const correct = `how we can solve the problem`;
+                const bad1 = `how can we solve the problem`;
+                const bad2 = `how we could solve the problem`;
+                const bad3 = `how can solve we the problem`;
+
+                return {
+                    difficulty: "普通",
+                    sentence: `${main} ______?`,
+                    options: [correct, bad1, bad2, bad3],
+                    correct,
+                    explanation: `
+                        <div class="space-y-1.5 text-xs text-slate-600 leading-relaxed">
+                            <span class="font-bold text-indigo-700 block text-sm">💡 普通题解析要点（情态动词位置）</span>
+                            <p><strong>1. 陈述语序：</strong> 情态动词 can 必须随陈述结构紧跟在主语 we 的后方。排除倒装的 <code class="text-rose-600 font-semibold">${bad1}</code> 和错位的 <code class="text-rose-600 font-semibold">${bad3}</code>。</p>
+                        </div>
+                    `
+                };
+            }
+        ];
+
+        // ==================== 挑战题生成工厂 (特点：从句极长，穿插定语从句等修饰语) ====================
+        const challengeFactories = [
+            // 1. where 过去时 + 定语从句修饰主语
+            () => {
+                const main = getRandomElement(vocabulary.mainsPast);
+                const correct = `where the young scientist who won the national chemistry award lived when he was a child`;
+                const bad1 = `where did the young scientist who won the national chemistry award live when he was a child`;
+                const bad2 = `where the young scientist who won the national chemistry award lives when he was a child`;
+                const bad3 = `where lived the young scientist who won the national chemistry award when he was a child`;
+
+                return {
+                    difficulty: "挑战",
+                    sentence: `${main} ______ .`,
+                    options: [correct, bad1, bad2, bad3],
+                    correct,
+                    explanation: `
+                        <div class="space-y-1.5 text-xs text-slate-600 leading-relaxed">
+                            <span class="font-bold text-amber-600 block text-sm">🔥 挑战题解析：攻坚“定语从句”多重修饰阻碍</span>
+                            <p><strong>1. 剥离修饰抓主谓：</strong> 这里的从句主语是 <code class="text-indigo-600 font-bold">the young scientist</code>。它被一个定语从句 <code class="text-indigo-500 font-semibold">who won the national chemistry award</code> 牢牢修饰，拉长了整个句子。剥离定语从句后，紧跟的必须是真正的谓语动词 <strong>lived</strong>。</p>
+                            <p><strong>2. 陈述语序：</strong> 选项 <code class="text-rose-600 font-semibold">${bad1}</code> 选项插入了助动词 did 进行了疑问句式的倒装；选项 <code class="text-rose-600 font-semibold">${bad3}</code> 则直接将动词提前，均属倒装语序错误。</p>
+                            <p><strong>3. 主从时态呼应：</strong> 主句为过去时（<code class="text-slate-900 font-semibold">${main}</code>），且伴有过去的时间状语（when he was a child），因此从句不能用一般现在时 lives，排除 <code class="text-rose-600 font-semibold">${bad2}</code>。</p>
+                        </div>
+                    `
+                };
+            },
+            // 2. what 过去进行时 + 志愿者限制性修饰
+            () => {
+                const main = getRandomElement(vocabulary.mainsPast);
+                const correct = `what the middle school students who volunteered at the library were doing during the winter holiday`;
+                const bad1 = `what were the middle school students who volunteered at the library doing during the winter holiday`;
+                const bad2 = `what the middle school students who volunteered at the library are doing during the winter holiday`;
+                const bad3 = `what does the middle school students who volunteered at the library do during the winter holiday`;
+
+                return {
+                    difficulty: "挑战",
+                    sentence: `${main} ______ .`,
+                    options: [correct, bad1, bad2, bad3],
+                    correct,
+                    explanation: `
+                        <div class="space-y-1.5 text-xs text-slate-600 leading-relaxed">
+                            <span class="font-bold text-amber-600 block text-sm">🔥 挑战题解析：进行时与长主语拆分</span>
+                            <p><strong>1. 识别真正的主语和谓语：</strong> 从句主语是复数复词短语 <code class="text-indigo-600 font-semibold">the middle school students</code>，后面尾随了定语从句 <code class="text-indigo-400 font-semibold">who volunteered at the library</code> 做长修饰。真正的谓语动词应该在修饰尾部，使用陈述语序：<code class="text-emerald-600 font-bold">were doing</code>。</p>
+                            <p><strong>2. 语序排雷：</strong> 选项 <code class="text-rose-600 font-semibold">${bad1}</code> 将 be 动词 were 提到了主语前面，属于典型疑问倒装错误。</p>
+                            <p><strong>3. 时态排雷：</strong> 主句为过去时态，从句必须呼应为过去进行时。选项 <code class="text-rose-600 font-semibold">${bad2}</code>（are）和 <code class="text-rose-600 font-semibold">${bad3}</code>（does）都属于现在时态范围，排除。</p>
+                        </div>
+                    `
+                };
+            },
+            // 3. why 过去时 + 被动语态 + 时间状语修饰
+            () => {
+                const main = getRandomElement(vocabulary.mainsPast);
+                const correct = `why the ancient temple which was built hundreds of years ago was completely destroyed in the war`;
+                const bad1 = `why was the ancient temple which was built hundreds of years ago completely destroyed in the war`;
+                const bad2 = `why the ancient temple which was built hundreds of years ago is completely destroyed in the war`;
+                const bad3 = `why does the ancient temple which was built hundreds of years ago completely destroyed in the war`;
+
+                return {
+                    difficulty: "挑战",
+                    sentence: `${main} ______ .`,
+                    options: [correct, bad1, bad2, bad3],
+                    correct,
+                    explanation: `
+                        <div class="space-y-1.5 text-xs text-slate-600 leading-relaxed">
+                            <span class="font-bold text-amber-600 block text-sm">🔥 挑战题解析：长修饰语与被动语态语序</span>
+                            <p><strong>1. 结构大拆解：</strong> 主语为 <code class="text-indigo-600 font-bold">the ancient temple</code>，被定语从句 <code class="text-indigo-400 font-semibold">which was built hundreds of years ago</code> 隔断。其真正的谓语动词被动语态为 <code class="text-emerald-600 font-bold">was completely destroyed</code>。</p>
+                            <p><strong>2. 规避倒装：</strong> 很多同学由于句子过长，容易错选含有疑问句结构 <code class="text-rose-600 font-semibold">was the ancient... destroyed</code> 的 <code class="text-rose-600 font-semibold">${bad1}</code> 选项。</p>
+                            <p><strong>3. 时态严控：</strong> 主句为过去时，从句被动语态应为过去时被动 <code class="text-emerald-600 font-bold">was destroyed</code>，不可用一般现在时的 is（排除 <code class="text-rose-600 font-semibold">${bad2}</code>）或助动词 does（排除 <code class="text-rose-600 font-semibold">${bad3}</code>）。</p>
+                        </div>
+                    `
+                };
+            },
+            // 4. when 过去将来时 + 延迟航班的长定语修饰
+            () => {
+                const main = getRandomElement(vocabulary.mainsPast);
+                const correct = `when the international flight which was delayed due to the heavy rain would finally take off`;
+                const bad1 = `when would the international flight which was delayed due to the heavy rain finally take off`;
+                const bad2 = `when the international flight which was delayed due to the heavy rain will finally take off`;
+                const bad3 = `when is the international flight which was delayed due to the heavy rain take off`;
+
+                return {
+                    difficulty: "挑战",
+                    sentence: `${main} ______ .`,
+                    options: [correct, bad1, bad2, bad3],
+                    correct,
+                    explanation: `
+                        <div class="space-y-1.5 text-xs text-slate-600 leading-relaxed">
+                            <span class="font-bold text-amber-600 block text-sm">🔥 挑战题解析：过去将来时长难句攻关</span>
+                            <p><strong>1. 语序检验：</strong> 过去将来时助动词 <code class="text-emerald-600 font-bold">would</code> 绝对不能提到长主语（<code class="text-indigo-600 font-semibold">the international flight... heavy rain</code>）之前。排除经典倒装陷阱 <code class="text-rose-600 font-semibold">${bad1}</code>。</p>
+                            <p><strong>2. 时态降级呼应：</strong> 过去时主句下，描述将要发生的动作，必须将一般将来时 will 转化为<strong>过去将来时 <code class="text-emerald-600 font-bold">would</code></strong>。故排除 <code class="text-rose-600 font-semibold">${bad2}</code>（will）和 <code class="text-rose-600 font-semibold">${bad3}</code>（is）。</p>
+                        </div>
+                    `
+                };
+            },
+            // 5. whether 引导的复杂被动 + 情态动词修饰
+            () => {
+                const main = getRandomElement(vocabulary.mainsPast);
+                const correct = `whether the new environmental rules which were made by the school committee could improve our learning condition`;
+                const bad1 = `whether could the new environmental rules which were made by the school committee improve our learning condition`;
+                const bad2 = `whether the new environmental rules which were made by the school committee can improve our learning condition`;
+                const bad3 = `could the new environmental rules which were made by the school committee improve our learning condition`;
+
+                return {
+                    difficulty: "挑战",
+                    sentence: `${main} ______ .`,
+                    options: [correct, bad1, bad2, bad3],
+                    correct,
+                    explanation: `
+                        <div class="space-y-1.5 text-xs text-slate-600 leading-relaxed">
+                            <span class="font-bold text-amber-600 block text-sm">🔥 挑战题解析：双重引导词与情态动词嵌套</span>
+                            <p><strong>1. 引导词的缺省：</strong> 一般疑问句转化而来的宾语从句必须带连接代词 whether。选项 <code class="text-rose-600 font-semibold">${bad3}</code> 漏掉了 whether 并且进行了疑问倒装，完全错误。</p>
+                            <p><strong>2. 情态动词的语序与过去式转化：</strong> 情态动词应放在整个定语从句修饰词的尾部。必须采用陈述结构（<code class="text-emerald-600 font-bold">could improve</code>），排除提前倒装的 <code class="text-rose-600 font-semibold">${bad1}</code>。同时在过去时主句影响下，can 必须转化为过去式 <strong>could</strong>（排除 <code class="text-rose-600 font-semibold">${bad2}</code>）。</p>
+                        </div>
+                    `
+                };
+            },
+            // 6. how 引导的长修饰动作
+            () => {
+                const main = getRandomElement(vocabulary.mainsPast);
+                const correct = `how the expert who came from the key national university resolved the database error within two hours`;
+                const bad1 = `how did the expert who came from the key national university resolve the database error within two hours`;
+                const bad2 = `how the expert who came from the key national university resolves the database error within two hours`;
+                const bad3 = `how is the expert who came from the key national university resolve the database error within two hours`;
+
+                return {
+                    difficulty: "挑战",
+                    sentence: `${main} ______ .`,
+                    options: [correct, bad1, bad2, bad3],
+                    correct,
+                    explanation: `
+                        <div class="space-y-1.5 text-xs text-slate-600 leading-relaxed">
+                            <span class="font-bold text-amber-600 block text-sm">🔥 挑战题解析：实义动词的语序控制</span>
+                            <p><strong>1. 实义动词陈述句中不需要助动词：</strong> 宾语从句是陈述句语序。因此，句子应该采用主语 + 动词过去式：<code class="text-emerald-600 font-bold">resolved...</code>。排除强制添加疑问助动词 did 导致倒装的 <code class="text-rose-600 font-semibold">${bad1}</code>。</p>
+                            <p><strong>2. 时态匹配：</strong> 排除一般现在时第三人称单数 <code class="text-rose-600 font-semibold">${bad2}</code>（resolves）和语法混乱的 be 动词结构 <code class="text-rose-600 font-semibold">${bad3}</code>。</p>
+                        </div>
+                    `
+                };
+            }
+        ];
+
+        // ==================== 状态切换和数据生成控制 ====================
+
+        // 设置测验题量
+        function setQuestionCount(count) {
+            state.totalQuestions = count;
+            
+            // 更新按钮激活样式
+            document.querySelectorAll('.btn-count').forEach(btn => {
+                btn.classList.remove('border-indigo-600', 'bg-indigo-50/50', 'text-indigo-600', 'shadow-sm', 'shadow-indigo-50');
+                btn.classList.add('border-slate-200', 'text-slate-600');
+            });
+            const activeBtn = document.getElementById(`btn-count-${count}`);
+            activeBtn.classList.remove('border-slate-200', 'text-slate-600');
+            activeBtn.classList.add('border-indigo-600', 'bg-indigo-50/50', 'text-indigo-600', 'shadow-sm', 'shadow-indigo-50');
+        }
+
+        // 设置难度配比
+        function setDifficultyRatio(ratio) {
+            state.ratioType = ratio;
+
+            document.querySelectorAll('.btn-ratio').forEach(btn => {
+                btn.classList.remove('border-indigo-600', 'bg-indigo-50/50', 'text-indigo-600', 'shadow-sm', 'shadow-indigo-50');
+                btn.classList.add('border-slate-200', 'text-slate-600');
+            });
+            const activeBtn = document.getElementById(`btn-ratio-${ratio}`);
+            activeBtn.classList.remove('border-slate-200', 'text-slate-600');
+            activeBtn.classList.add('border-indigo-600', 'bg-indigo-50/50', 'text-indigo-600', 'shadow-sm', 'shadow-indigo-50');
+        }
+
+        // 核心混合算法：动态组卷引擎
+        function generateSinglePageQuiz(total, ratioType) {
+            const quizSet = [];
+            
+            // 计算不同难度的题目份额
+            let normalCount = 0;
+            let challengeCount = 0;
+
+            if (ratioType === 'easy') {
+                normalCount = Math.round(total * 0.8);
+                challengeCount = total - normalCount;
+            } else if (ratioType === 'medium') {
+                normalCount = Math.round(total * 0.5);
+                challengeCount = total - normalCount;
+            } else { // hard
+                normalCount = Math.round(total * 0.2);
+                challengeCount = total - normalCount;
+            }
+
+            // 打乱工厂列表，防止多次重复
+            const shuffledNormals = shuffle(normalFactories);
+            const shuffledChallenges = shuffle(challengeFactories);
+
+            // 1. 抽取并注入普通难度题
+            for (let i = 0; i < normalCount; i++) {
+                const factory = shuffledNormals[i % shuffledNormals.length];
+                const raw = factory();
+                const shuffledOpts = shuffle(raw.options);
+                const answerIdx = shuffledOpts.indexOf(raw.correct);
+
+                quizSet.push({
+                    difficulty: raw.difficulty,
+                    sentence: raw.sentence,
+                    options: shuffledOpts,
+                    correct: raw.correct,
+                    answerIndex: answerIdx,
+                    explanation: raw.explanation
+                });
+            }
+
+            // 2. 抽取并注入挑战难度题
+            for (let i = 0; i < challengeCount; i++) {
+                const factory = shuffledChallenges[i % shuffledChallenges.length];
+                const raw = factory();
+                const shuffledOpts = shuffle(raw.options);
+                const answerIdx = shuffledOpts.indexOf(raw.correct);
+
+                quizSet.push({
+                    difficulty: raw.difficulty,
+                    sentence: raw.sentence,
+                    options: shuffledOpts,
+                    correct: raw.correct,
+                    answerIndex: answerIdx,
+                    explanation: raw.explanation
+                });
+            }
+
+            // 彻底打乱全卷，使得普通题与挑战题无规律混杂
+            return shuffle(quizSet);
+        }
+
+        // 开始测试页面渲染
+        function startQuiz() {
+            state.questions = generateSinglePageQuiz(state.totalQuestions, state.ratioType);
+            state.userAnswers = {};
+            state.isSubmitted = false;
+
+            // UI 转换
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('status-badge').classList.remove('hidden');
+            document.getElementById('results-banner').classList.add('hidden'); // 重置隐藏结果图表
+
+            // 初始化进度面板
+            document.getElementById('total-count-lbl').innerText = state.totalQuestions;
+            
+            // 统计混合构成
+            const nNum = state.questions.filter(q => q.difficulty === '普通').length;
+            const cNum = state.questions.filter(q => q.difficulty === '挑战').length;
+            document.getElementById('difficulty-mix-lbl').innerText = `普通题: ${nNum} | 挑战题: ${cNum}`;
+
+            updateProgress();
+            renderAllQuestions();
+        }
+
+        // 动态渲染所有卡片
+        function renderAllQuestions() {
+            const listContainer = document.getElementById('questions-list-container');
+            listContainer.innerHTML = ''; // 清空上一轮的节点
+
+            state.questions.forEach((q, qIndex) => {
+                const qCard = document.createElement('div');
+                qCard.id = `q-card-${qIndex}`;
+                qCard.className = "bg-white rounded-2xl p-6 md:p-8 border border-slate-100 shadow-sm space-y-4 transition-all duration-300";
+
+                // 难度微章配色
+                const badgeColor = q.difficulty === '挑战' 
+                    ? 'bg-amber-50 text-amber-700 border-amber-200' 
+                    : 'bg-emerald-50 text-emerald-700 border-emerald-200';
+
+                // 组装选项
+                let optionsHtml = `<div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">`;
+                const alphabet = ['A', 'B', 'C', 'D'];
+                
+                q.options.forEach((opt, optIndex) => {
+                    optionsHtml += `
+                        <button id="opt-${qIndex}-${optIndex}" onclick="selectSingleOption(${qIndex}, ${optIndex})" 
+                            class="opt-btn flex items-center text-left p-4 rounded-xl border-2 border-slate-100 hover:border-indigo-100 hover:bg-slate-50/50 transition-all duration-200 relative group">
+                            <div class="flex items-start space-x-3 w-full pr-6">
+                                <span id="opt-badge-${qIndex}-${optIndex}" class="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 text-xs font-bold flex items-center justify-center shrink-0 transition-colors">
+                                    ${alphabet[optIndex]}
+                                </span>
+                                <span class="text-slate-700 text-sm font-medium break-all select-none pt-0.5 leading-relaxed">${opt}</span>
+                            </div>
+                            <div id="checked-icon-${qIndex}-${optIndex}" class="absolute right-4 top-1/2 -translate-y-1/2 hidden shrink-0"></div>
+                        </button>
+                    `;
+                });
+                optionsHtml += `</div>`;
+
+                // 组装卡片内部
+                qCard.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-7 h-7 bg-indigo-50 text-indigo-700 font-bold text-xs rounded-lg flex items-center justify-center">
+                                ${qIndex + 1}
+                            </span>
+                            <span class="px-2.5 py-0.5 border ${badgeColor} rounded-full text-[10px] font-black uppercase tracking-wider">
+                                ${q.difficulty}难度
+                            </span>
+                        </div>
+                        <div id="check-result-text-${qIndex}" class="hidden text-xs font-bold"></div>
+                    </div>
+                    
+                    <div class="space-y-1">
+                        <h3 class="text-base md:text-lg font-bold text-slate-900 leading-relaxed">
+                            ${q.sentence}
+                        </h3>
+                    </div>
+
+                    ${optionsHtml}
+
+                    <!-- 提交后自动激活的解析栏 -->
+                    <div id="explanation-container-${qIndex}" class="hidden mt-4 pt-4 border-t border-dashed border-slate-100">
+                        <details id="details-${qIndex}" class="cursor-pointer group">
+                            <summary class="font-bold text-xs text-indigo-600 hover:text-indigo-800 select-none flex items-center gap-1">
+                                <span>点击展开本题全结构解析</span>
+                                <svg class="w-3.5 h-3.5 transform group-open:rotate-180 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </summary>
+                            <div class="mt-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                ${q.explanation}
+                            </div>
+                        </details>
+                    </div>
+                `;
+
+                listContainer.appendChild(qCard);
+            });
+        }
+
+        // 用户点击某题选项
+        function selectSingleOption(qIndex, optIndex) {
+            if (state.isSubmitted) return; // 已经提交不能再选
+
+            // 记录当前选择
+            state.userAnswers[qIndex] = optIndex;
+
+            // 清理同一道题下所有其他按钮的选择样式
+            const q = state.questions[qIndex];
+            q.options.forEach((_, idx) => {
+                const btn = document.getElementById(`opt-${qIndex}-${idx}`);
+                const badge = document.getElementById(`opt-badge-${qIndex}-${idx}`);
+                const icon = document.getElementById(`checked-icon-${qIndex}-${idx}`);
+
+                // 恢复默认未选高亮
+                btn.className = "opt-btn flex items-center text-left p-4 rounded-xl border-2 border-slate-100 hover:border-indigo-100 hover:bg-slate-50/50 transition-all duration-200 relative group";
+                badge.className = "w-7 h-7 rounded-lg bg-slate-100 text-slate-500 text-xs font-bold flex items-center justify-center shrink-0 transition-colors group-hover:bg-indigo-50 group-hover:text-indigo-600";
+                icon.classList.add('hidden');
+            });
+
+            // 给当前点击的选项高亮
+            const activeBtn = document.getElementById(`opt-${qIndex}-${optIndex}`);
+            const activeBadge = document.getElementById(`opt-badge-${qIndex}-${optIndex}`);
+            const activeIcon = document.getElementById(`checked-icon-${qIndex}-${optIndex}`);
+
+            activeBtn.className = "opt-btn flex items-center text-left p-4 rounded-xl border-2 border-indigo-600 bg-indigo-50/20 transition-all duration-200 relative group";
+            activeBadge.className = "w-7 h-7 rounded-lg bg-indigo-600 text-white text-xs font-bold flex items-center justify-center shrink-0 transition-colors";
+            
+            activeIcon.classList.remove('hidden');
+            activeIcon.innerHTML = `
+                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+            `;
+
+            updateProgress();
+        }
+
+        // 动态反馈头部进度
+        function updateProgress() {
+            const answeredLength = Object.keys(state.userAnswers).length;
+            document.getElementById('answered-count').innerText = answeredLength;
+
+            // 百分比更新
+            const pct = Math.round((answeredLength / state.totalQuestions) * 100);
+            document.getElementById('quiz-overall-progress').style.width = `${pct}%`;
+
+            // 当答题完毕，才激活“提交试卷”按钮
+            const submitBtn = document.getElementById('submit-quiz-btn');
+            if (answeredLength === state.totalQuestions) {
+                submitBtn.disabled = false;
+                submitBtn.className = "w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm shadow-md shadow-indigo-100 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer transform hover:-translate-y-0.5";
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.className = "w-full md:w-auto bg-slate-200 text-slate-400 cursor-not-allowed font-bold py-2.5 px-6 rounded-xl text-sm transition-all duration-200 flex items-center justify-center gap-2";
+            }
+        }
+
+        // 提交整套考卷
+        function submitAllAnswers() {
+            if (Object.keys(state.userAnswers).length < state.totalQuestions) return;
+            
+            state.isSubmitted = true;
+            document.getElementById('status-badge').classList.add('hidden'); // 隐藏答题中角标
+
+            // 计算正确题目数量
+            let scoreCount = 0;
+
+            state.questions.forEach((q, qIndex) => {
+                const userAns = state.userAnswers[qIndex];
+                const isCorrect = (userAns === q.answerIndex);
+                
+                if (isCorrect) scoreCount++;
+
+                // 冻结当前题卡的所有点击效果并显现对错细节
+                const card = document.getElementById(`q-card-${qIndex}`);
+                const resultText = document.getElementById(`check-result-text-${qIndex}`);
+                const explanationBox = document.getElementById(`explanation-container-${qIndex}`);
+                const detailToggler = document.getElementById(`details-${qIndex}`);
+
+                // 强制解除所有选项的悬浮
+                q.options.forEach((_, optIdx) => {
+                    const btn = document.getElementById(`opt-${qIndex}-${optIdx}`);
+                    btn.classList.remove('hover:border-indigo-100', 'hover:bg-slate-50/50', 'cursor-pointer');
+                    btn.classList.add('cursor-default');
+                });
+
+                // 渲染结果标签
+                resultText.classList.remove('hidden');
+                explanationBox.classList.remove('hidden');
+
+                if (isCorrect) {
+                    card.className = "bg-white rounded-2xl p-6 md:p-8 border-2 border-emerald-500 shadow-sm space-y-4 transition-all duration-300";
+                    resultText.className = "text-xs font-bold text-emerald-600 flex items-center gap-1";
+                    resultText.innerHTML = `
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>答对啦</span>
+                    `;
+                    // 答对题目的解析默认折叠
+                    detailToggler.open = false;
+                } else {
+                    card.className = "bg-white rounded-2xl p-6 md:p-8 border-2 border-rose-400 shadow-sm space-y-4 transition-all duration-300";
+                    resultText.className = "text-xs font-bold text-rose-500 flex items-center gap-1";
+                    resultText.innerHTML = `
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>答错啦</span>
+                    `;
+
+                    // 给被错误选择的项变红，正确项加红绿指示
+                    const userBtn = document.getElementById(`opt-${qIndex}-${userAns}`);
+                    if (userBtn) {
+                        userBtn.className = "flex items-center text-left p-4 rounded-xl border-2 border-rose-400 bg-rose-50/40 relative group";
+                        const userBadge = document.getElementById(`opt-badge-${qIndex}-${userAns}`);
+                        userBadge.className = "w-7 h-7 rounded-lg bg-rose-500 text-white text-xs font-bold flex items-center justify-center shrink-0 transition-colors";
+                        const userIcon = document.getElementById(`checked-icon-${qIndex}-${userAns}`);
+                        userIcon.classList.remove('hidden');
+                        userIcon.innerHTML = `
+                            <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        `;
+                    }
+
+                    // 错题默认【自动展开】深度解析，给予强大的提示感
+                    detailToggler.open = true;
+                }
+
+                // 在所有答案选项中高亮“真正正确的选项”，打上小绿标
+                const correctBtn = document.getElementById(`opt-${qIndex}-${q.answerIndex}`);
+                correctBtn.className = "flex items-center text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50/30 relative group";
+                const correctBadge = document.getElementById(`opt-badge-${qIndex}-${q.answerIndex}`);
+                correctBadge.className = "w-7 h-7 rounded-lg bg-emerald-500 text-white text-xs font-bold flex items-center justify-center shrink-0 transition-colors";
+                const correctIcon = document.getElementById(`checked-icon-${qIndex}-${q.answerIndex}`);
+                correctIcon.classList.remove('hidden');
+                correctIcon.innerHTML = `
+                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                `;
+            });
+
+            // 隐藏追踪进度看板
+            document.getElementById('quiz-dashboard').classList.add('hidden');
+
+            // 显现结果头部
+            renderResultsBanner(scoreCount);
+        }
+
+        // 渲染测评分析报告
+        function renderResultsBanner(score) {
+            const resultsBanner = document.getElementById('results-banner');
+            resultsBanner.classList.remove('hidden');
+
+            const scorePercent = Math.round((score / state.totalQuestions) * 100);
+
+            // 填装百分百及圆环
+            document.getElementById('result-percent').innerText = `${scorePercent}%`;
+            const ring = document.getElementById('result-ring');
+            ring.setAttribute('stroke-dasharray', `${scorePercent}, 100`);
+
+            document.getElementById('score-details-lbl').innerText = `答对 ${score} / ${state.totalQuestions} 题`;
+
+            let headline = "";
+            let summary = "";
+
+            if (scorePercent === 100) {
+                headline = "👑 完美通关！无可争议的宾从学霸！";
+                summary = "太震撼了！你在极高难度的动态组卷下取得了 100% 满分。所有的定语从句干扰和复杂过去将来时态都未曾动摇你的判断。";
+                ring.setAttribute('stroke', '#10b981'); // 绿色
+            } else if (scorePercent >= 80) {
+                headline = "🎖 战绩显赫！离满分仅差一点火候！";
+                summary = "表现极其精彩。你已经完美建立了“陈述语序”和“主过去从过去”的底层模型。仅有个别具有多重修饰的长难“挑战题”在词汇阅读上给你带来了一点小麻烦，继续加油！";
+                ring.setAttribute('stroke', '#4f46e5'); // 蓝紫色
+            } else if (scorePercent >= 60) {
+                headline = "💪 顺利及格！基本语法结构掌握完毕！";
+                summary = "你已基本攻克普通难度。但在面对“含有定语从句”的挑战题时，你仍容易被多余的词汇和助动词干扰导致做错。建议细读下方被错题自动展开的“红卡”解析。";
+                ring.setAttribute('stroke', '#f59e0b'); // 橙色
+            } else {
+                headline = "📖 功底尚浅，建议对照错题重构语法";
+                summary = "不气馁！宾语从句最常考的核心是：①无论多么复杂的修饰，主谓顺序绝不倒装；②主句是 asked/wondered/knew 这种过去时态，从句谓语必须变成相应的过去范围。仔细看一下错题红卡的解析吧。";
+                ring.setAttribute('stroke', '#ef4444'); // 红色
+            }
+
+            document.getElementById('result-headline').innerText = headline;
+            document.getElementById('result-summary').innerText = summary;
+
+            // 页面平滑滚动到顶部，让用户直接看到报告
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 解析全卷展开/折叠切换
+        function toggleAllExplanations() {
+            let anyClosed = false;
+            
+            // 扫描是否存在还未展开的解析
+            state.questions.forEach((_, qIdx) => {
+                const detail = document.getElementById(`details-${qIdx}`);
+                if (detail && !detail.open) {
+                    anyClosed = true;
+                }
+            });
+
+            // 统一展开或者统一折叠
+            state.questions.forEach((_, qIdx) => {
+                const detail = document.getElementById(`details-${qIdx}`);
+                if (detail) {
+                    detail.open = anyClosed;
+                }
+            });
+
+            const btnText = document.getElementById('toggle-explanations-btn');
+            btnText.innerText = anyClosed ? "折叠全卷解析" : "展开全卷深入解析";
+        }
+
+        // 返回设置主页
+        function goHome() {
+            document.getElementById('results-banner').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('status-badge').classList.add('hidden');
+            document.getElementById('quiz-dashboard').classList.remove('hidden'); // 重置恢复
+            document.getElementById('welcome-screen').classList.remove('hidden');
+        }
+
+        // 页面初始化
+        window.onload = function() {
+            // 预设为 10 道题 
+            setQuestionCount(10);
+            setDifficultyRatio('medium');
+        }
+    </script>
+</body>
+</html>
