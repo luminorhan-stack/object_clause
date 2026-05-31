@@ -264,7 +264,7 @@
                             🟡 挑战难度级特点
                         </span>
                         <p class="text-xs text-slate-500 leading-relaxed">
-                            主从句中穿穿插有**定语从句（如 who won the prize）、时间状语或被动语态**。词数可达 15-25 词。旨在测试你是否能识破“定语从句”等长修饰干扰，准确寻找从句真正的“主语和谓语动词”。
+                            主从句中穿插有**定语从句（如 who won the prize）、时间状语或被动语态**。词数可达 15-25 词。旨在测试你是否能识破“定语从句”等长修饰干扰，准确寻找从句真正的“主语和谓语动词”。
                         </p>
                     </div>
                 </div>
@@ -822,7 +822,16 @@
             document.getElementById('welcome-screen').classList.add('hidden');
             document.getElementById('quiz-screen').classList.remove('hidden');
             document.getElementById('status-badge').classList.remove('hidden');
-            document.getElementById('results-banner').classList.add('hidden'); // 重置隐藏结果图表
+            
+            // 【核心修复】：重新开启一轮刷题时，务必将隐藏了的答题面板重新显现出来
+            document.getElementById('quiz-dashboard').classList.remove('hidden');
+            
+            // 隐藏上一次的结果看板并恢复解析开关按钮文本
+            document.getElementById('results-banner').classList.add('hidden'); 
+            const toggleExplanationsBtn = document.getElementById('toggle-explanations-btn');
+            if (toggleExplanationsBtn) {
+                toggleExplanationsBtn.innerText = "展开全卷深入解析";
+            }
 
             // 初始化进度面板
             document.getElementById('total-count-lbl').innerText = state.totalQuestions;
@@ -834,6 +843,9 @@
 
             updateProgress();
             renderAllQuestions();
+            
+            // 平滑滚到顶部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // 动态渲染所有卡片
